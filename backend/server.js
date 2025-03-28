@@ -7,6 +7,7 @@ const connectDB = require('./config/db');
 const app = express();
 
 const authRoutes = require("./routes/authRoutes")
+const userRoutes = require('./routes/userRoutes')
 //Middleware to handle cors
 app.use (
     cors ({
@@ -24,6 +25,7 @@ app.use(express.json())
 
 //Routes
 app.use('/api/auth', authRoutes)
+app.use('/api/users', userRoutes)
 
 //start server
 const PORT = process.env.PORT || 5000;

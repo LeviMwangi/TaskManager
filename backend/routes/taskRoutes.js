@@ -14,7 +14,7 @@ const {
 const router = express.Router();
 
 //task management
-router.get('/dashboard-dat', protect, getDashboardData);
+router.get('/dashboard-data', protect, getDashboardData);
 router.get('/user-dashbored-data', protect, getUserDashboardData);
 router.get('/', protect, getTasks);
 router.get('/:id', protect, getTaskById);

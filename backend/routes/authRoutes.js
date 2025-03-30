@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.get('/profile', protect, getUserProfile);
-router.get('/profile', protect, updateUserProfile);
+router.patch('/profile', protect, updateUserProfile);
 
 router.post('upload-image', upload.single('image'), (res, req) => {
     if (!req.file) {

@@ -1,10 +1,10 @@
 const User = require("../models/User");
-const bycrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 //Generate JWT Token
 const generateToken = (userId) => {
-    return jwt.sign({ id: userId }, process.env.JWT_SECREET, {expiresIn: '7d'});
+    return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
 };
 
 //@desc   Register a new user
@@ -12,8 +12,8 @@ const generateToken = (userId) => {
 //@access Public
 const registerUser = async (req, res) => {
     try {
-        const { name, email, password,profileImageUrl, adminInviteToken } =
-        req.body;
+        const { name, email, password, profileImageUrl, adminInviteToken } =
+            req.body;
 
         //check if user exists
         const userExists = await User.findOne({ email });
@@ -22,12 +22,11 @@ const registerUser = async (req, res) => {
         }
 
         // Determine user role; Admin if correct token is provided, otherwise member
-        if (
-            adminInviteToken &&
-            adminInviteToken == process.env.ADMIN_INVITE_TOKEN
-        ) (
-            role = "admin"
-        )
+        if (adminInviteToken && adminInviteToken == process.env.ADMIN_INVITE_TOKEN) {
+            role = "admin";
+        } else {
+            role = "member";
+        }
 
         //Hash password 
         const salt = await bcrypt.genSalt(10);
@@ -37,7 +36,7 @@ const registerUser = async (req, res) => {
         const user = await User.create({
             name,
             email,
-            password : hashedPassword,
+            password: hashedPassword,
             profileImageUrl,
             role
         });
@@ -51,7 +50,7 @@ const registerUser = async (req, res) => {
             profileImageUrl: user.profileImageUrl,
             token: generateToken(user._id),
         });
-    } catch(error) {
+    } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
     };
 };
@@ -77,7 +76,8 @@ const loginUser = async (req, res) => {
 
         // Return User data with JWT
         res.json({
-            _id:  usr._id,
+            message: "Login Successful",
+            _id: user._id,
             name: user.name,
             email: user.email,
             role: user.role,
@@ -85,7 +85,7 @@ const loginUser = async (req, res) => {
             token: generateToken(user._id)
         })
     } catch (error) {
-        res.status(500).json({ message: "server error", error: error.message})
+        res.status(500).json({ message: "server error", error: error.message })
     }
 };
 
@@ -96,11 +96,11 @@ const getUserProfile = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password')
         if (!user) {
-            return res.status(404).json({ message: 'user not found'})
+            return res.status(404).json({ message: 'user not found' })
         }
         res.json(user);
     } catch (error) {
-        res.status(500).json({ message: "server error", error: error.message})
+        res.status(500).json({ message: "server error", error: error.message })
     }
 };
 
@@ -110,30 +110,33 @@ const getUserProfile = async (req, res) => {
 const updateUserProfile = async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
+        const updates = req.body;
 
-        if(!user) {
-            return res.status(404).json({ message: "user not found "});
+        if (!user) {
+            return res.status(404).json({ message: "user not found " });
         }
 
-        user.name = req.body.name || user.name;
-        user.email = req.body.email || user.email
+        // Only allow updating specified fields
+        const allowedUpdates = ["name", "email", "password", "profileImageUrl"];
+        
+        const updateKeys = Object.keys(updates);
+        const isValidUpdate = updateKeys.every(key => allowedUpdates.includes(key));
 
-        if (req.body.password) {
-            const salt = await bycrypt.genSalt(10);
-            user.password = await bcrypt.hash(req.body.password, salt);
+        if (!isValidUpdate) {
+            return res.status(400).json({ message: "Invalid update fields" });
         }
 
-        const updatedUser = await user.save();
+        const updatedUser = await User.findByIdAndUpdate(req.user.id, updates, {
+            new: true,
+            runValidators: true
+        });
 
-        res.json ({
-            _id: updatedUser._id,
-            name: updatedUser.name,
-            email: updatedUser.email,
-            role: updatedUser.role,
-            token: generateToken(updatedUser._id),
-        })
+        if (!updatedUser) return res.status(404).json({ message: "User not found" });
+
+        res.json({message: "profile updated", updatedUser});
+    
     } catch (error) {
-        res.status(500).json({ message: "server error", error: error.message})
+        res.status(500).json({ message: "server error", error: error.message })
     }
 };
 

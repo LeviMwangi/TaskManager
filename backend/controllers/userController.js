@@ -7,16 +7,18 @@ const bcrypt = require('bcryptjs')
 // @access Private (Admin)
 const getUsers = async (req, res) => {
     try {
-        const users = await user .find({ role: 'member'}).select('_password');
+        const users = await User.find({ role: 'member'}).select('_password');
 
         //Add task counts to each user
         const usersWithTaskcounts = await Promise.all(users.map(async (user) => {
+            // const name = user.name;
             const pendingTasks = await Task.countDocuments({ assingedTo: user._id, status: 'pending' });
             const  inProgressTaks = await Task.countDocuments({ assignedTo: user._id, status: 'In Progress'});
             const completedTasks = await Task.countDocuments({ assignedTo: user._id, status: 'completed' });
 
             return {
                 ...user._doc,
+                // name,
                 pendingTasks,
                 inProgressTaks,
                 completedTasks
@@ -34,9 +36,10 @@ const getUsers = async (req, res) => {
 // @access Private 
 const getUserById = async (req, res) => {
     try {
-        const user = await User.findById(req.params.id).select('_password');
+        const { id } = req.params
+        const user = await User.findById({_id: id});
             if (!user) return res.status(404).json({ message: 'user not found'});
-            res.json(user);
+            res.json({ message: "User Found", user: { id: user._id, name: user.name, email: user.email, role: user.role, userProfileURL: user.profileImageUrl, createdAt: user.createdAt, updatedAt: user.updatedAt} });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message})
     }

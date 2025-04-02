@@ -1,6 +1,6 @@
 const Task =require('../models/Task');
 const User =require('../models/User')
-const excelJs = require('exceljs')
+const ExcelJs = require('exceljs')
 
 // @dsec Export all Tasks an an excel file
 // @route GET/api/reports/export/tasks
@@ -9,8 +9,8 @@ const exportTaskReport = async (req, res) => {
     try {
         const tasks = await Task.find().populate('assignedTo', 'name email');
 
-        const workbook = new excelJs.workbook();
-        const worksheet = new excelJs.addWorkSheet('Tasks Report');
+        const workbook = new ExcelJs.Workbook();
+        const worksheet = workbook.addWorksheet('Tasks Report');
 
         worksheet.colums = [
             { header: 'Task ID', key: '_id', width: 25},
@@ -92,8 +92,8 @@ const exportUsersReport = async (req, res) => {
             }
         });
 
-        const workbook = new excelJs.workbook();
-        const worksheet = workbook.addWorkSheet('User Task Report')
+        const workbook = new ExcelJs.Workbook();
+        const worksheet = workbook.addWorksheet('User Task Report')
 
         worksheet.colums = [
             { header: 'User Name', key: 'name', width: 30},

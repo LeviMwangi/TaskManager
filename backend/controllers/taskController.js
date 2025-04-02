@@ -29,7 +29,7 @@ const getTasks = async (req, res) => {
         // Add completed todoChecklist count to each task
         tasks = await Promise.all(
             tasks.map(async (task) => {
-                const completedCount = task.todoChecklist.filter(
+                const completedCount = (task.todoChecklist || []).filter(
                     (item) => item.completed // Fixed typo
                 ).length;
                 return { ...task._doc, completedTodoCount: completedCount };
@@ -78,9 +78,10 @@ const getTasks = async (req, res) => {
 // @access Private
 const getTaskById = async (req, res) => {
     try {
-        const task = await Task.findById(req.params.id).populate(
+        const { id } = req.params;
+        console.log(id);
+        const task = await Task.findById({_id: id}).populate(
             "assignedTo",
-            "name email profileImageUrl" // Fixed typo
         );
 
         if (!task) return res.status(404).json({ message: "Task not found" });
@@ -103,7 +104,7 @@ const createTask = async (req, res) => {
             dueDate,
             assignedTo,
             attachments,
-            todoChecklist,
+            // todoChecklist,
         } = req.body;
 
         if (!Array.isArray(assignedTo)) {
@@ -119,7 +120,7 @@ const createTask = async (req, res) => {
             dueDate,
             assignedTo,
             createdBy: req.user._id,
-            todoChecklist,
+            // todoChecklist,
             attachments,
         });
 
@@ -217,16 +218,16 @@ const updateTaskCheckList = async (req, res) => {
 
         if (!task) return res.status(404).json({ message: 'Task not found'});
 
-        if (!task.assignedTo.includes(req,user._id) && req.user.role !== 'admin')  {
+        if (!task.assignedTo.includes(req.user._id) && req.user.role !== 'admin')  {
             return res
             .status(403)
             .json({ message: 'Not authorized to update checklist'});
         }   
 
-        task.todoChecklist = todoChecklist; //Replace with updated checklist
+        task.todoChecklist = todoChecklist || []; //Replace with updated checklist
 
-        //Auto-update progress based on checcklist completion
-        const completedCount = task.todoChecklist.filter(
+        //Auto-update progress based on checklist completion
+        const completedCount = (task.todoChecklist || []).filter(
             (item) => item.completed
         ).length;
         const totalItems = task.todoChecklist.length;
@@ -291,7 +292,7 @@ const getDashboardData = async (req, res) => {
             {
                 $group: {
                     _id: '$priority',
-                    count 
+                    count: { $sum: 1 } 
                 }
             }
         ]);
@@ -332,6 +333,7 @@ const getDashboardData = async (req, res) => {
 const getUserDashboardData = async (req, res) => {
     try{
         const userId = req.user._id; // Only fetch data for the logged-in user
+        console.log(userId);
 
         //Fetch statistics for user specific tasks
         const totalTasks = await Task.countDocuments({ assignedTo: userId });

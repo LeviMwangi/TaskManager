@@ -540,6 +540,75 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Export",
+			"item": [
+				{
+					"name": "Export Tasks",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZTk4NTk2ZjQ4ZGRiMjJhODNjZGM1MCIsImlhdCI6MTc0MzYwMzI3MCwiZXhwIjoxNzQ0MjA4MDcwfQ.losFKS3n99c9omzeDAoXaJxIoNBWoxuZedG4TczJZMM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/reports/export/tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"reports",
+								"export",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Export Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZTk4NTk2ZjQ4ZGRiMjJhODNjZGM1MCIsImlhdCI6MTc0MzYwMzI3MCwiZXhwIjoxNzQ0MjA4MDcwfQ.losFKS3n99c9omzeDAoXaJxIoNBWoxuZedG4TczJZMM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/reports/export/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"reports",
+								"export",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

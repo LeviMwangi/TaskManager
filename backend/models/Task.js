@@ -6,10 +6,10 @@ const todoSchema = new mongoose.Schema({
 });
 
 const taskSchema = new mongoose.Schema({
-    tittle: { type: String, required: true },
+    title: { type: String, required: true },
     description: { type: String },
     priority: {type: String, enum: ['Low', 'Medium', 'High'], default: 'medium'},
-    status: {type:String, enum: ['pending', 'In Progress', 'Completed'], default: 'Pending'},
+    status: {type:String, enum: ['Pending', 'In Progress', 'Completed'], default: 'Pending'},
     dueDate: {type: Date, required: true},
     assignedTo : [{type: mongoose.Schema.Types.ObjectId, ref:'user'}],
     createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},

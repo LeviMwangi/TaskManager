@@ -14,6 +14,7 @@ const Input = ({value, onChange, label, placeholder, type}) => {
   return (
     <div className='relative w-full'>
         <div>
+          <label className='font-semibold'>{label} :</label>
             <input
                 type={type == 'password' ? showPassword ? 'text' : 'password' : type}
                 placeholder={ placeholder }
@@ -24,7 +25,7 @@ const Input = ({value, onChange, label, placeholder, type}) => {
             
             {type === 'password' && (
               <>
-              <div className='absolute inset-y-0 right-3 flex items-center cursor-pointer'>
+              <div className='absolute -mt-8 right-3 flex items-center cursor-pointer '>
               {showPassword ? (
                   <HiEye 
                     size={22}

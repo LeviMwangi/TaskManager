@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import image1 from '../../assets/images/login.jpg';
 import Input from '../../Components/Inputs/Input';
@@ -11,6 +11,7 @@ import {
 import { validateEmail } from '../../Utils/helper';
 import axiosInstance from '../../Utils/axiosInstance';
 import { API_PATHS } from '../../Utils/apiPath';
+import { userContext } from '../../context/userContext';
 
 
 const Login = () => {
@@ -18,7 +19,8 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-
+  
+  const {updatedUser} = useContext(userContext)
   // Handle Login Form Submit
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -47,7 +49,7 @@ const Login = () => {
 
     if (token) {
       localStorage.setItem('token', token);
-
+      updatedUser(response.data);
       //Redirect based on roll
       if (role === 'admin') {
         navigate('/admin/dashboard');

@@ -37,7 +37,7 @@ const UserProvider = ({ children }) => {
         fetchUser();
     }, []);
 
-    const updatedUser = (userData) => {
+    const updateUser = (userData) => {
         setUser(userData);
         localStorage.setItem('token', userData.token);
         setLoading(false);
@@ -49,7 +49,7 @@ const UserProvider = ({ children }) => {
     };
 
     return (
-        <userContext.Provider value={{ user, loading, updatedUser, clearUser }}>
+        <userContext.Provider value={{ user, loading, updateUser, clearUser }}>
             {children}
         </userContext.Provider>
     );

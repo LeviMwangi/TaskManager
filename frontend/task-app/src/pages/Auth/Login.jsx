@@ -20,7 +20,7 @@ const Login = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   
-  const {updatedUser} = useContext(userContext)
+  const { updateUser } = useContext(userContext);
   // Handle Login Form Submit
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -49,7 +49,7 @@ const Login = () => {
 
     if (token) {
       localStorage.setItem('token', token);
-      updatedUser(response.data);
+      updateUser(response.data);
       //Redirect based on roll
       if (role === 'admin') {
         navigate('/admin/dashboard');
